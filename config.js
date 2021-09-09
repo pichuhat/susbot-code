@@ -16,7 +16,7 @@
 // The username and password that Cassius will use to login
 exports.username = 's ~ usb ~ ot';
 // leave this blank if the username is unregistered
-exports.password = '7bZY&uL*?/RYa-4';
+exports.password = '(oh, no no no)';
 
 // The server address to which Cassius will connect
 exports.server = '';
