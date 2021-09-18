@@ -1,5 +1,5 @@
 
-// susbot's code
+//susbot's code
 
 /**
  * Commands
@@ -17,11 +17,15 @@
 // This prevents accidentally overwriting a scheduled tournament.
 /**@type {Map<string, string>} */
 let overwriteWarnings = new Map();
-
 var hostable = 0
 var hoster
-var newapply = "none"
 var devlist = Config.developers
+var hoston = 0
+
+const lowest = ["bulbasaur", "charmander", "squirtle"];
+const middle = ["ivysaur", "charmeleon", "wartortle"];
+const highest = ["venusaur", "charizard", "blastoise"];
+const fullpokes = ["bulbasaur", "ivysaur", "venusaur", "charmander", "charmeleon", "charizard", "squirtle", "wartortle", "blastoise", "caterpie", "metapod", "butterfree", "weedle", "kakuna", "beedrill", "pidgey", "pidgeotto", "pidgeot", "rattata", "raticate", "spearow", "fearow", "ekans", "arbok", "pikachu", "raichu", "sandshrew", "sandslash", "nidoran-f", "nidorina", "nidoqueen", "nidoran-m", "nidorino", "nidoking", "clefairy", "clefable", "vulpix", "ninetales", "jigglypuff", "wigglytuff", "zubat", "golbat", "crobat", "gloom", "vileplume", "paras", "parasect", "venonat", "venomoth", "diglett", "dugtrio", "meowth", "persian", "psyduck", "golduck", "mankey", "primeape", "growlithe", "arcanine", "poliwag", "poliwhirl", "poliwrath", "abra", "kadabra", "alakazam", "machop", "machoke", "machamp", "bellsprout", "weepinbell", "victreebel", "tentacool", "tentacruel", "geodude", "graveler", "golem", "ponyta", "rapidash", "slowpoke", "slowbro", "magnemite", "magneton", "magnezone", "doduo", "dodrio", "seel", "dewgong", "grimer", "muk", "shellder", "cloyster", "gastly", "haunter", "gengar", "onix", "steelix", "hypno", "krabby", "kingler", "voltorb", "electrode", "exeggcute", "exeggutor", "cubone", "marowak", "hitmonlee", "hitmonchan", "lickitung", "koffing", "weezing", "rhyhorn", "rhydon", "chansey", "tangela", "kangaskhan", "horsea", "seadra", "goldeen", "seaking", "staryu", "starmie", "mr. mime", "scyther", "jynx", "electabuzz", "magmar", "pinsir", "tauros", "magikarp", "gyarados", "lapras", "ditto", "eevee", "vaporeon", "jolteon", "flareon", "porygon", "omantyke", "omastar", "kabuto", "kabutops", "aerodactyl", "snorlax", "articuno", "zapdos", "moltres", "dratini", "dragonair", "dragonite", "mewtwo", "mew"];
 
 /**@type {{[k: string]: Command | string}} */
 let commands = {
@@ -57,6 +61,7 @@ let commands = {
 		return this.say("/adduhtml susbothelp, <a href='https://github.com/sirDonovan/Cassius'>susbot's guide</a>");
 	},
 	mail: function (target, room, user) {
+        console.log("target: " + target)
 		if (!(room instanceof Users.User) || !Config.allowMail) return;
 		let targets = target.split(',');
 		if (targets.length < 2) return this.say("Please use the following format: .mail user, message");
@@ -109,31 +114,11 @@ let commands = {
         return this.say("/wall the game of uno is starting!");
         },
     
-    //the command below is under construction.
         basecode: function (target, room, user) {
 		if (room instanceof Users.User) return;
-        console.log("isdeveloper", user.isDeveloper());
-        if (!user.isDeveloper()) return;
-        console.log("we made it!")
-            return this.say("/adduhtml susbothelp, <a href='https://pastebin.com/raw/8aSb1srL'>commands.js</a> <br> <a href='https://pastebin.com/raw/tcq5cMV6'>client.js</a> <br> <a href='https://pastebin.com/raw/zNBbRDLQ'>message.js</a> <br> <a href='https://pastebin.com/raw/CiyxaeeA'>config.js</a> <br> there are more! you'll need them if you're basing your bot off this.");
+        return this.say("https://github.com/pichuhat/susbot-code");
         },
-    
-        hostgtp: function (target, room, user) {
-		if (room instanceof Users.User) return;
-        if (hostable == 1) {
-        hoster = user.name
-		return this.say("/adduhtml susbothelp, <h1>" + user.name + " is hosting a game of Guess the Pokemon!</h1> <small>" + user.name + "</small>");
-         } else {
-             return this.say("/sendprivatehtmlbox " + user.name + ", <p>hosting is currently disabled. " + user.name + " please try again later!</p>");
-         }
-        },
-    
-        endhostgtp: function (target, room, user) {
-		if (room instanceof Users.User) return;
-        if (!hoster == user.name) return;
-        hoster = "none"
-		return this.say("/adduhtml susbothelp, <h1>" + user.name + "'s host of Guess the Pokemon was ended!</h1> <small>" + user.name + "</small>");
-        },
+ 
     
         potato: function (target, room, user) {
 		if (room instanceof Users.User) {
@@ -169,6 +154,7 @@ let commands = {
           hostable = 1
           return this.say("user-hosting is now allowed until ``.disablehost`` is received.");
         },
+    
         disablehost: function (target, room, user) {
           if (room instanceof Users.User) return;
           console.log("isdeveloper", user.isDeveloper())
@@ -178,9 +164,20 @@ let commands = {
         },
     
         say: function (target, room, user) {
-          if (room instanceof Users.User) return;
-           this.say("an error occurred. data shown below.")
-           return this.say("/adduhtml susboterror, user: " + user.name + " <br> id: " + user.id + " <br> roomId: " + room.id + " <br> clientId: " + room.clientId + " <br> users: " + user.users)
+          if (room instanceof Users.User) {
+          if (target == "") {
+          return this.say("invalid argument.");
+          } else {
+          return this.say(target)
+          }
+          } else {
+          if (!user.isDeveloper()) return;
+          if (target == "") {
+          return this.say("invalid argument.") 
+          } else {
+          return this.say(target)   
+           }
+          }    
         },
     
         developers: function (target, room, user) {
@@ -192,50 +189,133 @@ let commands = {
           }
         },
     
-        apply: function (target, room, user) {
-         if (!room instanceof Users.User) return;
-         if (newapply == user.name) {
-         return this.say("you are already on the apply list!");
+        host: function (target, room, user) {
+        if (room instanceof Users.User) {
+        return this.say("okay, you are now ho- WAIT THIS IS PMS");
          } else {
-         if (devlist.includes(user.id)) {
-         return this.say("you are already a developer!"); 
+        if (hoston == 1) {
+        return this.say("/msg " + user.name + ", you don't realize, another peep is hosting noob");
           } else {
-         if (!newapply == "none") {
-         return this.say("there is already another person on the apply list!")
-         } else {
-         newapply == user.name
-         return this.say("you were added to the apply list.")
+        if (hostable == 1) {
+        if (target == "gtp" || target == "guessthepokemon") {
+        hoster = user.name
+        hoston = 1
+        return this.say(user.name + "is now hosting a game of Guess the Pokemon!");   
+            } else {
+        return this.say("invalid game.");
+           }
+          } else {
+        return this.say("/msg " + user.name + ", try asking an auth to allow hosting noob")     
+          }
          }
+        }
+       },
+      
+        endhost: function (target, room, user) {
+        if (room instanceof Users.User) {
+        return this.say("okay, ending yo- WAIT THIS IS PMS");    
+         } else {
+        if (hoster == user.name) {
+        hoster == "none"
+        hoston = 0
+        return this.say("the host was ended!");
+          } else {
+        return this.say("/msg " + user.name + ", its not ur host noob");
          }
         }
        },
     
-        checkapplylist: function (target, room, user) {
-        if (!room instanceof Users.User) return;
-        if (!user.isDeveloper()) {
-        return this.say("You do not have permission to use this command!")    
-        } else {
-        return this.say("Apply list: " + newapply);    
+        sus: function (target, room, user) {
+        if (room instanceof Users.User) {
+        return this.say("in pm's ur never sus")    
+         } else {
+        if (user.hasRank(room, "#")) {
+        return this.say("/msg " + user.name + ", i didn't know someone could be that sus. **sus rank: 10/10**");
+          } else {
+        if (user.hasRank(room, "@")) {
+        return this.say("/msg " + user.name + ", woah, pretty sus there. **sus rank: 8/10**");   
+          } else {
+        if (user.hasRank(room, "%")) {
+        return this.say("/msg " + user.name + ", quite sus, but maybe someone is framing you. **sus rank: 6/10**");
+           } else {
+        if (user.hasRank(room, "+")) {
+        return this.say("/msg " + user.name + ", not that sus, someone said that on shoddy evidence. **sus rank: 3/10**")   
+            } else {
+        return this.say("/msg " + user.name + ", good crewmate! **sus rank: 0/10**")    
+            }
+           }
+          }
+         }
+        }
+       },
+    
+        pikachu: function (target, room, user) {
+        if (room instanceof Users.User) {
+        return this.say("pikachu is the evolved form of pichu, and pikachu evolves into raichu.");   
+         } else {
+        if (!user.hasRank(room, "+") && !user.isDeveloper()) return;
+        return this.say("pikachu is the evolved form of pichu, and pikachu evolves into raichu.")
          }
         },
     
-        clearapplylist: function (target, room, user) {
-        if (!room instanceof Users.User) return;
-        if (user.isDeveloper()) {
-        newapply = "none"
-        return this.say("Cleared the apply list.")   
+        //selfreminder: [1,2,3,4].indexOf 
+        getevolution: function (target, room, user) {
+        if (room instanceof Users.User) {
+        if (lowest.includes(target)) {
+        return this.say(middle[middle.indexOf(target)])    
+          } else {
+        if (middle.includes(target)) {
+        return this.say(highest[highest.indexOf(target)])    
+           } else {
+        if (highest[highest.indexOf(target) + 1]) {
+        return this.say("pokemon " + target + "does not evolve, but it exists.")    
+           } else {
+        return this.say("either pokemon " + target + "does not exist, or i don't have it in my database.");  
+            }
+           }
+          }
          } else {
-        return this.say("You do not have permission to use this command!")  
+        if (lowest.includes(target)) {
+        return this.say(middle[middle.indexOf(target)])    
+          } else {
+        if (!user.isDeveloper() && user.hasRank(room, "+")) return;
+        if (middle.includes(target)) {
+        return this.say(highest[highest.indexOf(target)])    
+           } else {
+        if (highest.includes(target)) {
+        return this.say("pokemon " + target + "does not evolve, but it exists.")    
+           } else {
+        return this.say("either pokemon " + target + " does not exist, or i don't have it in my database.");  
+            }
+           }
+          }
          }
         },
+    
+        getdex: function (target, room, user) {
+        if (room instanceof Users.User) {
+        if (fullpokes.includes(target) && target == "") {
+        return this.say(fullpokes.indexOf(target) + 1, "is pokemon " + target + "'s dex number.")    
+        } else {
+        return this.say("invalid pokemon. BOOP")
+        }
+         } else {
+        if (!user.isDeveloper && user.hasRank(room, "+")) return;
+        if (fullpokes.includes(target) && !target == "") {
+        return this.say(fullpokes.indexOf(target) + 1, "is pokemon " + target + "'s dex number.");   
+        } else {
+        return this.say("invalid pokemon. BOOP");
+         }
+        }
+       },
     
         sobre: function (target, room, user) {
 		if (room instanceof Users.User) {
-		return this.say("Hola, yo soy " + Config.username + "! Soy un bot. Mi carácter de comando es ``. ``. Para obtener ayuda, pm usuario pichuhat. Estoy basado en el sistema de robots de sirDonovan, Cassius. puedes verlo aqui: https://github.com/sirDonovan/Cassius");
+		return this.say("¡Hola, yo soy " + Config.username + "! Soy un bot. Mi carácter de comando es ``. ``. Para obtener ayuda, pm usuario pichuhat. Estoy basado en el sistema de robots de sirDonovan, Cassius. puedes verlo aqui: https://github.com/sirDonovan/Cassius");
         } else {
         console.log("isdeveloper", user.isDeveloper())
         if (!user.isDeveloper() && !user.hasRank(room, "+")) return;
-        return this.say("Hola, yo soy " + Config.username + "! Soy un bot. Mi carácter de comando es ``. ``. Para obtener ayuda, pm usuario pichuhat. Estoy basado en el sistema de robots de sirDonovan, Cassius. puedes verlo aqui: https://github.com/sirDonovan/Cassius")  
+        return this.say("¡Hola, yo soy " + Config.username + "! Soy un bot. Mi carácter de comando es ``. ``. Para obtener ayuda, pm usuario pichuhat. Estoy basado en el sistema de robots de sirDonovan, Cassius. puedes verlo aqui: https://github.com/sirDonovan/Cassius")  
        }
     },
     
@@ -276,28 +356,6 @@ let commands = {
         console.log("we made it!")
 		this.say("/uno start")
         return this.say("/wall ¡El juego de uno está comenzando!");
-        },
-    
-        anfitriónaep: function (target, room, user) {
-		if (room instanceof Users.User) return;
-        if (hostable == 1) {
-        hoster = user.name
-		return this.say("/adduhtml susbothelp, <h1>" + user.name + " está organizando un juego de Adivina el Pokemon!</h1> <small>" + user.name + "</small>");
-         } else {
-             return this.say("/sendprivatehtmlbox " + user.name + ", <p>el alojamiento está actualmente deshabilitado. ¡" + user.name + ", inténtelo de nuevo más tarde!</p>");
-         }
-        },
-    
-        finanfitriónaep: function (target, room, user) {
-		if (room instanceof Users.User) return;
-        if (!hoster == user.name) return;
-        hoster = "none"
-		return this.say("/adduhtml susbothelp, <h1>¡La hueste de" + user.name + " de adivina que el pokemon había terminado!</h1> <small>" + user.name + "</small>");
-        },
-    
-        selfclear: function (target, room, user) {
-		if (room instanceof Users.User) return;
-		return this.say("/hidetext " + user.name + ", este usuario borró intencionalmente sus propios mensajes");
         },
    
         permitiranfitrion: function (target, room, user) {
